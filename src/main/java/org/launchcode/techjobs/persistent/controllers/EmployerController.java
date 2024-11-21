@@ -18,7 +18,7 @@ public class EmployerController {
     @Autowired
     private EmployerRepository employerRepository;
 
-    @GetMapping("/")
+    @GetMapping("/") //display a list of all employers in the database
     public String index(Model model) {
         model.addAttribute("employers", employerRepository.findAll());
         return "employers/index";
@@ -38,14 +38,13 @@ public class EmployerController {
             return "employers/add";
         }
 
-        employerRepository.save(newEmployer);
-
+        employerRepository.save(newEmployer); //save the valid employer object
         return "redirect:";
     }
 
-    @GetMapping("view/{employerId}")
+    @GetMapping("view/{employerId}") //display the contents of an individual employer object
     public String displayViewEmployer(Model model, @PathVariable int employerId) {
-        Optional<Employer> optEmployer = employerRepository.findById(employerId);
+        Optional<Employer> optEmployer = employerRepository.findById(employerId); //look for a given employer object from the data layer
 
         if (optEmployer.isPresent()) {
             Employer employer = (Employer) optEmployer.get();

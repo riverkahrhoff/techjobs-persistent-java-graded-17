@@ -15,26 +15,25 @@ import java.util.Optional;
 @RequestMapping("skills")
 public class SkillController {
 
-    // Autowire the SkillRepository to interact with the database
     @Autowired
     private SkillRepository skillRepository;
 
-    // Index method to list all skills
-    @GetMapping("/")
+
+    @GetMapping("/") //display list of all skills in the database
     public String index(Model model) {
-        model.addAttribute("skills", skillRepository.findAll()); // Get all skills from the database
-        return "skills/index"; // Render the 'skills/index' template
+        model.addAttribute("skills", skillRepository.findAll());
+        return "skills/index";
     }
 
-    // Method to display the form to add a new skill
-    @GetMapping("add")
+
+    @GetMapping("add") //display the form to add a new skill
     public String displayAddSkillForm(Model model) {
         model.addAttribute(new Skill()); // Add an empty Skill object to the model
         return "skills/add"; // Render the 'skills/add' template
     }
 
-    // Method to process the form and save a new skill
-    @PostMapping("add")
+
+    @PostMapping("add") //process the form and save a new skill
     public String processAddSkillForm(@ModelAttribute @Valid Skill newSkill,
                                       Errors errors, Model model) {
         if (errors.hasErrors()) {
@@ -47,8 +46,8 @@ public class SkillController {
         return "redirect:"; // Redirect to the index page after successful save
     }
 
-    // Method to display a single skill's details
-    @GetMapping("view/{skillId}")
+
+    @GetMapping("view/{skillId}") //display the details of an individual skill object
     public String displayViewSkill(Model model, @PathVariable int skillId) {
         Optional<Skill> optSkill = skillRepository.findById(skillId); // Find skill by ID
 

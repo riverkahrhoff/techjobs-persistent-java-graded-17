@@ -14,7 +14,7 @@ public class Employer extends AbstractEntity {
 
 
     @NotNull
-    @Size(min = 2, max = 100)
+    @Size(min = 2, max = 100, message = "this field is required")
     private String location;
 
     @OneToMany
@@ -24,8 +24,9 @@ public class Employer extends AbstractEntity {
     public Employer() {
     }
 
-    public Employer(String location) {
+    public Employer(String location, List<Job> jobs) {
         this.location = location;
+        this.jobs = jobs;
     }
 
     public @NotNull @Size(min = 2, max = 100) String getLocation() {

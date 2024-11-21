@@ -16,7 +16,7 @@ public abstract class AbstractEntity {
     private int id;
 
     @NotNull
-    @Size(max = 100)
+    @Size(min = 2, max = 100, message = "this field is required")
     private String name;
 
     public int getId() {

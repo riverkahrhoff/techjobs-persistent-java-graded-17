@@ -34,8 +34,9 @@ public class HomeController {
 
     @RequestMapping("/")
     public String index(Model model) {
-
+        List<Job> jobs = (List<Job>) jobRepository.findAll();
         model.addAttribute("title", "MyJobs");
+        model.addAttribute("jobs", jobs);
 
         return "index";
     }
@@ -58,9 +59,12 @@ public class HomeController {
     public String processAddJobForm(@ModelAttribute @Valid Job newJob,
                                        Errors errors, Model model, @RequestParam int employerId, @RequestParam List<Integer> skills) {
 
+
         if (errors.hasErrors()) {
-	    model.addAttribute("title", "Add Job");
+            model.addAttribute("title", "Add Job");
+
             return "add";
+
         }
         Optional<Employer> employer = employerRepository.findById(employerId);
         if (employer.isPresent()) {
@@ -79,7 +83,16 @@ public class HomeController {
     @GetMapping("view/{jobId}")
     public String displayViewJob(Model model, @PathVariable int jobId) {
 
-            return "view";
+        Optional<Job> job = jobRepository.findById(jobId); // Find the job by ID
+
+        if (job.isPresent()) {
+            model.addAttribute("job", job.get()); // Add the job object to the model
+            return "view"; // The name of the Thymeleaf template
+        } else {
+            return "redirect:/"; // Redirect if job is not found
+        }
+
+
     }
 
 }

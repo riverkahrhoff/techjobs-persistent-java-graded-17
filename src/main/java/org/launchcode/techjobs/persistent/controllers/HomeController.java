@@ -32,32 +32,36 @@ public class HomeController {
     @Autowired
     private JobRepository jobRepository;
 
-    @RequestMapping("/")
+    @RequestMapping("/") //display a list of all jobs
     public String index(Model model) {
-        List<Job> jobs = (List<Job>) jobRepository.findAll();
-        model.addAttribute("title", "MyJobs");
-        model.addAttribute("jobs", jobs);
+        List<Job> jobs = (List<Job>) jobRepository.findAll(); //get all jobs from the database
+        model.addAttribute("title", "MyJobs"); //add a title for the page
+        model.addAttribute("jobs", jobs); //pass the list of jobs to the view
 
         return "index";
     }
 
-    @GetMapping("add")
+    @GetMapping("add") //display a form to add jobs to the database
     public String displayAddJobForm(Model model) {
         model.addAttribute("title", "Add Job");
 
-        List<Employer> employers = (List<Employer>) employerRepository.findAll(); //add employer and skill data into the form template
+        // Fetch and add all employers and skills to the model for selection in the form
+        List<Employer> employers = (List<Employer>) employerRepository.findAll();
         model.addAttribute("employers", employers);
 
         List<Skill> skills = (List<Skill>) skillRepository.findAll();
         model.addAttribute("skills", skills);
 
-        model.addAttribute(new Job());
+        model.addAttribute(new Job()); //add a new job object, allowing the form to bind input fields to the properties of the object
         return "add";
     }
 
-    @PostMapping("add")
-    public String processAddJobForm(@ModelAttribute @Valid Job newJob,
-                                       Errors errors, Model model, @RequestParam int employerId, @RequestParam List<Integer> skills) {
+    @PostMapping("add") //process the submission of the form
+    public String processAddJobForm(@ModelAttribute @Valid Job newJob, //bind form data to a job object and validate it
+                                    Errors errors,
+                                    Model model,
+                                    @RequestParam int employerId,
+                                    @RequestParam List<Integer> skills) {
 
 
         if (errors.hasErrors()) {
@@ -66,30 +70,30 @@ public class HomeController {
             return "add";
 
         }
-        Optional<Employer> employer = employerRepository.findById(employerId);
+        Optional<Employer> employer = employerRepository.findById(employerId); // Fetch the selected employer by ID
         if (employer.isPresent()) {
-            newJob.setEmployer(employer.get());
+            newJob.setEmployer(employer.get()); // Associate the employer with the job
         }
 
-        List<Skill> skillObjs = (List<Skill>) skillRepository.findAllById(skills);
-        newJob.setSkills(skillObjs);
+        List<Skill> skillObjs = (List<Skill>) skillRepository.findAllById(skills);  // Fetch the selected skills by their IDs
+        newJob.setSkills(skillObjs); // Associate the skills with the job
 
 
-        jobRepository.save(newJob);
+        jobRepository.save(newJob); // Save the new Job to the database
 
         return "redirect:";
     }
 
-    @GetMapping("view/{jobId}")
+    @GetMapping("view/{jobId}") //display details of a specific job
     public String displayViewJob(Model model, @PathVariable int jobId) {
 
         Optional<Job> job = jobRepository.findById(jobId); // Find the job by ID
 
         if (job.isPresent()) {
             model.addAttribute("job", job.get()); // Add the job object to the model
-            return "view"; // The name of the Thymeleaf template
+            return "view";
         } else {
-            return "redirect:/"; // Redirect if job is not found
+            return "redirect:/";
         }
 
 

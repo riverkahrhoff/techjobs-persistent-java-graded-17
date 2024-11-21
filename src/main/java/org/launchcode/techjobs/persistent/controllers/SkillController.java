@@ -21,15 +21,15 @@ public class SkillController {
 
     @GetMapping("/") //display list of all skills in the database
     public String index(Model model) {
-        model.addAttribute("skills", skillRepository.findAll());
+        model.addAttribute("skills", skillRepository.findAll()); //add all skills to the model
         return "skills/index";
     }
 
 
     @GetMapping("add") //display the form to add a new skill
     public String displayAddSkillForm(Model model) {
-        model.addAttribute(new Skill()); // Add an empty Skill object to the model
-        return "skills/add"; // Render the 'skills/add' template
+        model.addAttribute(new Skill()); // Add an empty Skill object to the model to bind form inputs
+        return "skills/add";
     }
 
 
@@ -37,13 +37,13 @@ public class SkillController {
     public String processAddSkillForm(@ModelAttribute @Valid Skill newSkill,
                                       Errors errors, Model model) {
         if (errors.hasErrors()) {
-            return "skills/add"; // Return to the form if there are validation errors
+            return "skills/add";
         }
 
         // Save the new skill to the database
         skillRepository.save(newSkill);
 
-        return "redirect:"; // Redirect to the index page after successful save
+        return "redirect:";
     }
 
 
@@ -51,12 +51,12 @@ public class SkillController {
     public String displayViewSkill(Model model, @PathVariable int skillId) {
         Optional<Skill> optSkill = skillRepository.findById(skillId); // Find skill by ID
 
-        if (optSkill.isPresent()) {
-            Skill skill = optSkill.get();
+        if (optSkill.isPresent()) { // Check if a skill with the given ID exists
+            Skill skill = optSkill.get(); // Retrieve the skill object
             model.addAttribute("skill", skill); // Add the skill object to the model
-            return "skills/view"; // Render the 'skills/view' template
+            return "skills/view";
         } else {
-            return "redirect:../"; // Redirect to the main page if the skill is not found
+            return "redirect:../";
         }
     }
 }

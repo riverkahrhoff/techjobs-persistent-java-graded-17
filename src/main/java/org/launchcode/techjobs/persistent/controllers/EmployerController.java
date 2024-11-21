@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
-@Controller
+@Controller //manages CRUD operations for employer objects and connects the view with the data layer
 @RequestMapping("employers")
 public class EmployerController {
 
@@ -20,17 +20,17 @@ public class EmployerController {
 
     @GetMapping("/") //display a list of all employers in the database
     public String index(Model model) {
-        model.addAttribute("employers", employerRepository.findAll());
+        model.addAttribute("employers", employerRepository.findAll()); //add a list of all Employer objects to the model from the repository
         return "employers/index";
     }
 
-    @GetMapping("add")
+    @GetMapping("add") //render a form to add a new employer
     public String displayAddEmployerForm(Model model) {
-        model.addAttribute(new Employer());
+        model.addAttribute(new Employer()); //adds a new employer object to the form
         return "employers/add";
     }
 
-    @PostMapping("add")
+    @PostMapping("add") //process form submission and add new employer objects to the database
     public String processAddEmployerForm(@ModelAttribute @Valid Employer newEmployer,
                                     Errors errors, Model model) {
 
@@ -46,9 +46,9 @@ public class EmployerController {
     public String displayViewEmployer(Model model, @PathVariable int employerId) {
         Optional<Employer> optEmployer = employerRepository.findById(employerId); //look for a given employer object from the data layer
 
-        if (optEmployer.isPresent()) {
-            Employer employer = (Employer) optEmployer.get();
-            model.addAttribute("employer", employer);
+        if (optEmployer.isPresent()) { //checks if employer exists
+            Employer employer = (Employer) optEmployer.get(); //retrieves the object
+            model.addAttribute("employer", employer); //adds it to the model
             return "employers/view";
         } else {
             return "redirect:../";

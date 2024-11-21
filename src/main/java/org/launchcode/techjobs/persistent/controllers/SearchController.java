@@ -20,24 +20,28 @@ public class SearchController {
     @Autowired
     private JobRepository jobRepository;
 
-    @RequestMapping("")
+    @RequestMapping("") //display the search form
     public String search(Model model) {
-        model.addAttribute("columns", columnChoices);
+        model.addAttribute("columns", columnChoices); //passes column choices to the view, imported from ListController
         return "search";
     }
 
-    // TODO #3 - Create a handler to process a search request and render the updated search view.
-    @PostMapping("results")
-    public String displaySearchResults(Model model, @RequestParam String searchType, @RequestParam String searchTerm){
-        Iterable<Job> jobs;
-        if (searchTerm.toLowerCase().equals("all") || searchTerm.equals("")){
+
+    @PostMapping("results") //process the form and display results
+    public String displaySearchResults(Model model,
+                                       @RequestParam String searchType, //column to search
+                                       @RequestParam String searchTerm){ //term to search for
+        Iterable<Job> jobs; //to hold search results
+        if (searchTerm.toLowerCase().equals("all") || searchTerm.equals("")){ //if search term is all or empty, fetch all jobs
             jobs = jobRepository.findAll();
         } else {
-            jobs = JobData.findByColumnAndValue(searchType, searchTerm, jobRepository.findAll());
+            jobs = JobData.findByColumnAndValue(searchType, searchTerm, jobRepository.findAll()); //filter jobs by specified column and value
         }
-        model.addAttribute("columns", columnChoices);
-        model.addAttribute("title", "Jobs with " + columnChoices.get(searchType) + ": " + searchTerm);
-        model.addAttribute("jobs", jobs);
+
+        //pass necessary data to the view
+        model.addAttribute("columns", columnChoices); //column choices to repopulate form
+        model.addAttribute("title", "Jobs with " + columnChoices.get(searchType) + ": " + searchTerm); //page title
+        model.addAttribute("jobs", jobs); //search results
 
         return "search";
     }
